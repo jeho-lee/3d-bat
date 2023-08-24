@@ -3,7 +3,7 @@
     {
       "name": "NuScenes",
       "sequences": [
-        "ONE"
+        "ONE", "TWO"
       ],
       "classes": [
         "human.pedestrian.adult",
