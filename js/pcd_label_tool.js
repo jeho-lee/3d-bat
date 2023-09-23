@@ -2051,6 +2051,7 @@ function readPointCloud() {
             if (rawFile.status === 200 || rawFile.status === 0) {
                 let allText = rawFile.responseText;
                 let allLines = allText.split("\n");
+                console.log(allLines)
                 for (let i = 0; i < allLines.length; i++) {
                     if (i < 11) {
                         // skip header
@@ -2125,6 +2126,7 @@ function normalizeDistances() {
 
 function showProjectedPoints() {
     let points3D = readPointCloud();
+    console.log(points3D)
     for (let channelIdx = 0; channelIdx < labelTool.camChannels.length; channelIdx++) {
         let paper = paperArrayAll[labelTool.currentFileIndex][channelIdx];
         let points2D = projectPoints(points3D, channelIdx);
