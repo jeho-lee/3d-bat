@@ -1537,7 +1537,6 @@ function setOrbitControls() {
     document.removeEventListener('keyup', onKeyUp, false);
     scene.remove(pointerLockObject);
 
-
     currentCamera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 3000);
     currentCamera.position.set(0, 0, 5);
     currentCamera.up.set(0, 0, 1);
@@ -1960,7 +1959,6 @@ function rotatePoint(pointX, pointY, originX, originY, angle) {
 
 
 function calculateProjectedBoundingBox(xPos, yPos, zPos, width, length, height, channel, rotationYaw, rotationPitch, rotationRoll) {
-    // TODO: incorporate yaw, pitch and roll before projecting the 3D points into image plane
     let idx = getChannelIndexByName(channel);
     // TODO: calculate scaling factor dynamically (based on top position of slider)
     let imageScalingFactor;
@@ -1984,7 +1982,26 @@ function calculateProjectedBoundingBox(xPos, yPos, zPos, width, length, height, 
         cornerPoints.push(new THREE.Vector3(xPos - width / 2, yPos + length / 2, zPos - height / 2));
     }
 
+    // Apply rotation to cornerPoints
+    // Define a rotation matrix based on yaw, pitch, and roll (in radians)
+    let rotationMatrix = new THREE.Matrix4();
+    rotationMatrix.identity();
+    rotationMatrix.makeRotationFromEuler(new THREE.Euler(rotationRoll, rotationPitch, rotationYaw, 'XYZ'));
 
+    // Calculate the center of the bounding box
+    let center = new THREE.Vector3(xPos, yPos, zPos);
+
+    // Apply rotation to cornerPoints around the center
+    for (let i = 0; i < cornerPoints.length; i++) {
+        // Translate corner point to be relative to the center
+        let relativePoint = cornerPoints[i].clone().sub(center);
+        // Apply rotation to the relative point
+        relativePoint.applyMatrix4(rotationMatrix);
+        // Translate the rotated point back to its original position
+        cornerPoints[i].copy(relativePoint).add(center);
+    }
+
+    // 2D Projection and filtering 2D pixels
     let projectedPoints = [];
     for (let cornerPoint in cornerPoints) {
         let point = cornerPoints[cornerPoint];
@@ -2005,8 +2022,8 @@ function calculateProjectedBoundingBox(xPos, yPos, zPos, width, length, height, 
             // do not draw bounding box if it is too close too camera or behind
             return [];
         }
-
     }
+
     return projectedPoints;
 }
 
@@ -2342,11 +2359,11 @@ function showSideView() {
 }
 
 function showHelperViews(xPos, yPos, zPos) {
-    showSideView();
-    showFrontView();
-    showBEV(xPos, yPos, zPos);//width along x axis (lateral), height along y axis (longitudinal)
-    // move class picker to right
-    $("#class-picker").css("left", window.innerWidth / 3 + 10);
+    // showSideView();
+    // showFrontView();
+    // showBEV(xPos, yPos, zPos);//width along x axis (lateral), height along y axis (longitudinal)
+    // // move class picker to right
+    // $("#class-picker").css("left", window.innerWidth / 3 + 10);
 }
 
 function enableInterpolationModeCheckbox(interpolationModeCheckbox) {
@@ -2783,12 +2800,12 @@ function mouseDownLogic(ev) {
 
         } else if (ev.button === 2) {
             // rightclick
-            clickedObjectIndex = labelTool.cubeArray[labelTool.currentFileIndex].indexOf(clickedObjects[0].object);
-            let bboxClass = annotationObjects.contents[labelTool.currentFileIndex][clickedObjectIndex]["class"];
-            let trackId = annotationObjects.contents[labelTool.currentFileIndex][clickedObjectIndex]["trackId"];
-            deleteObject(bboxClass, trackId, clickedObjectIndex);
-            // move button to left
-            $("#left-btn").css("left", 0);
+            // clickedObjectIndex = labelTool.cubeArray[labelTool.currentFileIndex].indexOf(clickedObjects[0].object);
+            // let bboxClass = annotationObjects.contents[labelTool.currentFileIndex][clickedObjectIndex]["class"];
+            // let trackId = annotationObjects.contents[labelTool.currentFileIndex][clickedObjectIndex]["trackId"];
+            // deleteObject(bboxClass, trackId, clickedObjectIndex);
+            // // move button to left
+            // $("#left-btn").css("left", 0);
         }//end right click
     } else {
         for (let i = 0; i < annotationObjects.contents[labelTool.currentFileIndex].length; i++) {

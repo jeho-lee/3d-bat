@@ -253,9 +253,8 @@ let labelTool = {
     }],
     // */
 
-
-
     currentChannelLabel: document.getElementById('cam_channel'),
+
     // position of the lidar sensor in ego vehicle space
     positionLidarNuscenes: [0.891067, 0.0, 1.84292],//(long, lat, vert) // with respect to ego coordinate system
     positionLidar: [0.0, 0.0, 6.9],//(long, lat, vert)
@@ -1190,6 +1189,7 @@ let labelTool = {
     },
 
     nextFrame: function () {
+        console.log("nextFrame")
         let start = new Date().getTime();
         if (this.currentFileIndex < (this.fileNames.length - 1 - this.skipFrameCount)) {
             this.changeFrame(this.currentFileIndex + this.skipFrameCount);

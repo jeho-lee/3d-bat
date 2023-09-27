@@ -176,12 +176,13 @@ $(window).keydown(function (e) {
         keyCode += "SHIFT";
     }
     switch (keyCode) {
-        case "78": // N
-            labelTool.nextFrame();
-            break;
-        case "66": // B
-            labelTool.previousFrame();
-            break;
+        // Already defined in pcd_label_tool.js
+        // case "78": // N
+        //     labelTool.nextFrame();
+        //     break;
+        // case "66": // B
+        //     labelTool.previousFrame();
+        //     break;
     }
     setAction(e);
 });
